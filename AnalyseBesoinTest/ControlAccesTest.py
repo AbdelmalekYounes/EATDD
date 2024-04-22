@@ -1,7 +1,7 @@
 import unittest
 from AnalyseBesoin.MoteurOuverture import MoteurOuverture
-from Utilities.LecteurFake import LecteurFake
-from Utilities.PorteSpy import PorteSpy
+from .Utilities.LecteurFake import LecteurFake
+from .Utilities.PorteSpy import PorteSpy
 
 class ControleAccesTest(unittest.TestCase):
 
