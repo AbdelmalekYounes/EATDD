@@ -1,6 +1,6 @@
 from AnalyseBesoin.ILecteur import ILecteur
 
-class LecteurFake(ILecteur):
+class LecteurTest(ILecteur):
     def __init__(self):
         self._detection_simulee = False
 

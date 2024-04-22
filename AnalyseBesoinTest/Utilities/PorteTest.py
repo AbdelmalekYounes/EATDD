@@ -1,6 +1,6 @@
 from AnalyseBesoin.IPorte import IPorte
 
-class PorteSpy(IPorte):
+class PorteTest(IPorte):
     def __init__(self):
         self._ouvertures_demandees = 0
 

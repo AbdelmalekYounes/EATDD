@@ -1,14 +1,14 @@
 import unittest
 from AnalyseBesoin.MoteurOuverture import MoteurOuverture
-from .Utilities.LecteurFake import LecteurFake
-from .Utilities.PorteSpy import PorteSpy
+from .Utilities.LecteurTest import LecteurTest
+from .Utilities.PorteTest import PorteTest
 
 class ControleAccesTest(unittest.TestCase):
 
     def test_cas_nominal(self):
         # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge
-        porte = PorteSpy()
-        lecteur = LecteurFake()
+        porte = PorteTest()
+        lecteur = LecteurTest()
         lecteur.simuler_detection_badge()
 
         moteur_ouverture = MoteurOuverture()
@@ -22,8 +22,8 @@ class ControleAccesTest(unittest.TestCase):
 
     def test_cas_aucune_interrogation(self):
         # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge
-        porte = PorteSpy()
-        lecteur = LecteurFake()
+        porte = PorteTest()
+        lecteur = LecteurTest()
         lecteur.simuler_detection_badge()
 
         moteur_ouverture = MoteurOuverture()
@@ -34,8 +34,8 @@ class ControleAccesTest(unittest.TestCase):
 
     def test_cas_non_badge(self):
         # ÉTANT DONNÉ une Porte reliée à un Lecteur, n'ayant pas détecté un Badge
-        porte = PorteSpy()
-        lecteur = LecteurFake()
+        porte = PorteTest()
+        lecteur = LecteurTest()
 
         moteur_ouverture = MoteurOuverture()
         moteur_ouverture.associer(lecteur, porte)
@@ -50,13 +50,13 @@ class ControleAccesTest(unittest.TestCase):
         # ÉTANT DONNÉ un Lecteur ayant détecté un Badge
         # ET un autre Lecteur n'ayant rien détecté
         # ET une Porte reliée chacune à un Lecteur
-        porte_devant_ouvrir = PorteSpy()
-        porte_devant_rester_fermee = PorteSpy()
+        porte_devant_ouvrir = PorteTest()
+        porte_devant_rester_fermee = PorteTest()
 
-        lecteur_detecte = LecteurFake()
+        lecteur_detecte = LecteurTest()
         lecteur_detecte.simuler_detection_badge()
 
-        lecteur_non_detecte = LecteurFake()
+        lecteur_non_detecte = LecteurTest()
 
         moteur_ouverture = MoteurOuverture()
         moteur_ouverture.associer(lecteur_detecte, porte_devant_ouvrir)
@@ -71,13 +71,13 @@ class ControleAccesTest(unittest.TestCase):
 
     def test_deux_portes_mais_l_inverse(self):
         # Même scénario avec des paires inversées pour confirmation de la logique
-        porte_devant_ouvrir = PorteSpy()
-        porte_devant_rester_fermee = PorteSpy()
+        porte_devant_ouvrir = PorteTest()
+        porte_devant_rester_fermee = PorteTest()
 
-        lecteur_detecte = LecteurFake()
+        lecteur_detecte = LecteurTest()
         lecteur_detecte.simuler_detection_badge()
 
-        lecteur_non_detecte = LecteurFake()
+        lecteur_non_detecte = LecteurTest()
 
         moteur_ouverture = MoteurOuverture()
         moteur_ouverture.associer(lecteur_non_detecte, porte_devant_rester_fermee)
@@ -92,9 +92,9 @@ class ControleAccesTest(unittest.TestCase):
 
     def test_cas_2_portes(self):
         # ÉTANT DONNÉ deux Portes reliées à un Lecteur, ayant détecté un Badge
-        porte1 = PorteSpy()
-        porte2 = PorteSpy()
-        lecteur = LecteurFake()
+        porte1 = PorteTest()
+        porte2 = PorteTest()
+        lecteur = LecteurTest()
         lecteur.simuler_detection_badge()
 
         moteur_ouverture = MoteurOuverture()
@@ -111,12 +111,12 @@ class ControleAccesTest(unittest.TestCase):
 
     def test_cas_2_lecteurs(self):
         # ÉTANT DONNÉ une Porte reliée à deux Lecteurs, ayant tous les deux détecté un Badge
-        porte = PorteSpy()
+        porte = PorteTest()
 
-        lecteur1 = LecteurFake()
+        lecteur1 = LecteurTest()
         lecteur1.simuler_detection_badge()
 
-        lecteur2 = LecteurFake()
+        lecteur2 = LecteurTest()
         lecteur2.simuler_detection_badge()
 
         moteur_ouverture = MoteurOuverture()
