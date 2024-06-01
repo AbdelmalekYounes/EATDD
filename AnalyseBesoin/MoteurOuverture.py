@@ -27,3 +27,9 @@ class MoteurOuverture:
         for porte in self._portes_a_ouvrir:
             porte.fermer()
         self._portes_a_ouvrir.clear()
+
+    def desactiver(self, porte):
+        # Désactiver une porte spécifique
+        for lecteurs in self._associations.associations.values():
+            if porte in lecteurs:
+                lecteurs.remove(porte)    

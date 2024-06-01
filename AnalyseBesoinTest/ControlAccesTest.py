@@ -1,3 +1,4 @@
+# ControlAccesTest.py
 import unittest
 from AnalyseBesoin.MoteurOuverture import MoteurOuverture
 from .Utilities.LecteurTest import LecteurTest
@@ -28,6 +29,7 @@ class ControleAccesTest(unittest.TestCase):
 
         moteur_ouverture = MoteurOuverture()
         moteur_ouverture.associer(lecteur, porte)
+
         # QUAND le Moteur d'Ouverture n'effectue pas d'interrogation des lecteurs
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
         self.assertFalse(porte.ouverture_demandee)
@@ -45,6 +47,19 @@ class ControleAccesTest(unittest.TestCase):
 
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
         self.assertFalse(porte.ouverture_demandee)
+
+    def test_cas_lecteur_non_associe(self):
+        # ÉTANT DONNÉ un Lecteur non associé à une porte
+        lecteur = LecteurTest()
+        lecteur.simuler_detection_badge()
+
+        moteur_ouverture = MoteurOuverture()
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteur_ouverture.interroger()
+
+        # ALORS aucune porte ne reçoit le signal d'ouverture
+        self.assertEqual(len(moteur_ouverture._portes_a_ouvrir), 0)    
 
     def test_deux_portes(self):
         # ÉTANT DONNÉ un Lecteur ayant détecté un Badge
@@ -108,7 +123,6 @@ class ControleAccesTest(unittest.TestCase):
         self.assertTrue(porte1.ouverture_demandee)
         self.assertTrue(porte2.ouverture_demandee)
 
-
     def test_cas_2_lecteurs(self):
         # ÉTANT DONNÉ une Porte reliée à deux Lecteurs, ayant tous les deux détecté un Badge
         porte = PorteTest()
@@ -127,7 +141,7 @@ class ControleAccesTest(unittest.TestCase):
         moteur_ouverture.interroger()
 
         # ALORS un seul signal d'ouverture est envoyé à la Porte
-        self.assertEqual(1, porte.ouverture_demandee)
+        self.assertTrue(porte.ouverture_demandee)
 
     def test_cas_fermeture_automatique(self):
         # ÉTANT DONNÉ une Porte ouverte, elle doit se fermer automatiquement après une période d'inactivité
@@ -164,10 +178,19 @@ class ControleAccesTest(unittest.TestCase):
         moteur_ouverture.attendre(3)  # Utilisation de 3 secondes pour vérifier que la porte reste ouverte
         self.assertFalse(porte.ouverture_demandee)  # La porte doit se fermer après la durée prédéfinie
 
+    def test_cas_lecteur_non_associe(self):
+        # ÉTANT DONNÉ un Lecteur non associé à une porte
+        lecteur = LecteurTest()
+        lecteur.simuler_detection_badge()
+
+        moteur_ouverture = MoteurOuverture()
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteur_ouverture.interroger()
+
+        # ALORS aucune porte ne reçoit le signal d'ouverture
+        self.assertEqual(len(moteur_ouverture._portes_a_ouvrir), 0)
 
 
-  
-    
-
-if __name__ == 'main':
+if __name__ == '__main__':
     unittest.main()
