@@ -191,6 +191,24 @@ class ControleAccesTest(unittest.TestCase):
         # ALORS aucune porte ne reçoit le signal d'ouverture
         self.assertEqual(len(moteur_ouverture._portes_a_ouvrir), 0)
 
+    def test_cas_porte_desactivee(self):
+        # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge
+        porte = PorteTest()
+        lecteur = LecteurTest()
+        lecteur.simuler_detection_badge()
+
+        moteur_ouverture = MoteurOuverture()
+        moteur_ouverture.associer(lecteur, porte)
+
+        # Désactiver la porte
+        moteur_ouverture.desactiver(porte)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteur_ouverture.interroger()
+
+        # ALORS le signal d'ouverture n'est pas envoyé à la porte désactivée
+        self.assertFalse(porte.ouverture_demandee)    
+
 
 if __name__ == '__main__':
     unittest.main()
