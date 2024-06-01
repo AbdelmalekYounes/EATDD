@@ -129,3 +129,22 @@ class ControleAccesTest(unittest.TestCase):
         # ALORS un seul signal d'ouverture est envoyé à la Porte
         self.assertEqual(1, porte.ouverture_demandee)
 
+    def test_cas_fermeture_automatique(self):
+        # ÉTANT DONNÉ une Porte ouverte, elle doit se fermer automatiquement après une période d'inactivité
+        porte = PorteTest()
+        lecteur = LecteurTest()
+        lecteur.simuler_detection_badge()
+
+        moteur_ouverture = MoteurOuverture()
+        moteur_ouverture.associer(lecteur, porte)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteur_ouverture.interroger()
+
+        # ALORS la porte se ferme automatiquement après une période d'inactivité
+        self.assertTrue(porte.ouverture_demandee)
+        moteur_ouverture.attendre(2)
+        self.assertTrue(porte.fermeture_demandee)
+
+    
+
