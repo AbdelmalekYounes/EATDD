@@ -28,7 +28,7 @@ class ControleAccesTest(unittest.TestCase):
 
         moteur_ouverture = MoteurOuverture()
         moteur_ouverture.associer(lecteur, porte)
-
+        # QUAND le Moteur d'Ouverture n'effectue pas d'interrogation des lecteurs
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
         self.assertFalse(porte.ouverture_demandee)
 
