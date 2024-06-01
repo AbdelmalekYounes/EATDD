@@ -7,7 +7,6 @@ class MoteurOuverture:
         self._portes_a_ouvrir = set()
 
     def interroger(self):
-
         # Collecter d'abord toutes les portes à ouvrir dans ce cycle
         for lecteur, portes in self._associations.associations.items():
             if lecteur.badge_detecte():
@@ -22,7 +21,7 @@ class MoteurOuverture:
         self._associations.enregistrer(lecteur, porte)
 
     def attendre(self, duree):
-         # Attendre une certaine durée en secondes
+        # Attendre une certaine durée en secondes
         time.sleep(duree)
         # Fermer les portes après la période d'attente
         for porte in self._portes_a_ouvrir:

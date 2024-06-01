@@ -143,8 +143,31 @@ class ControleAccesTest(unittest.TestCase):
 
         # ALORS la porte se ferme automatiquement après une période d'inactivité
         self.assertTrue(porte.ouverture_demandee)
-        moteur_ouverture.attendre(2)
-        self.assertTrue(porte.fermeture_demandee)
+        moteur_ouverture.attendre(2)  # Utilisation de 2 secondes pour simuler l'inactivité
+        self.assertFalse(porte.ouverture_demandee)  # La porte ne doit plus être ouverte
+        self.assertTrue(porte.fermeture_demandee)  # La porte doit être fermée
 
+    def test_cas_duree_ouverte(self):
+        # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge
+        porte = PorteTest()
+        lecteur = LecteurTest()
+        lecteur.simuler_detection_badge()
+
+        moteur_ouverture = MoteurOuverture()
+        moteur_ouverture.associer(lecteur, porte)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteur_ouverture.interroger()
+
+        # ALORS la porte reste ouverte pendant une durée prédéfinie
+        self.assertTrue(porte.ouverture_demandee)
+        moteur_ouverture.attendre(3)  # Utilisation de 3 secondes pour vérifier que la porte reste ouverte
+        self.assertFalse(porte.ouverture_demandee)  # La porte doit se fermer après la durée prédéfinie
+
+
+
+  
     
 
+if __name__ == 'main':
+    unittest.main()
