@@ -224,6 +224,18 @@ class ControleAccesTest(unittest.TestCase):
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
         self.assertFalse(porte.ouverture_demandee)
 
+    def test_cas_aucune_association(self):
+        # ÉTANT DONNÉ un Lecteur sans association à une Porte
+        lecteur = LecteurTest()
+        lecteur.simuler_detection_badge()
+
+        moteur_ouverture = MoteurOuverture()
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteur_ouverture.interroger()
+
+        # ALORS aucune porte ne reçoit le signal d'ouverture
+        self.assertEqual(len(moteur_ouverture._portes_a_ouvrir), 0)    
 
 if __name__ == '__main__':
     unittest.main()
