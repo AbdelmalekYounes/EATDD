@@ -1,65 +1,67 @@
 # ControlAccesTest.py
+from datetime import datetime, time
 import unittest
+from AnalyseBesoin.AssociationsLecteurPorte import AssociationsLecteurPorte
 from AnalyseBesoin.MoteurOuverture import MoteurOuverture
 from .Utilities.LecteurTest import LecteurTest
 from .Utilities.PorteTest import PorteTest
 
 class ControleAccesTest(unittest.TestCase):
 
+    def setUp(self):
+        self.heure_debut = time(9)
+        self.heure_fin = time(18)
+
+        self.heure_actuelle = datetime.now().time()
+
+        self.lecteur = LecteurTest()
+        self.porte = PorteTest()
+        self.moteur = MoteurOuverture(self.heure_debut, self.heure_fin)
+
     def test_cas_nominal(self):
         # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge
-        porte = PorteTest()
-        lecteur = LecteurTest()
-        lecteur.simuler_detection_badge()
+        self.lecteur.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur, porte)
+        self.moteur.associer(self.lecteur, self.porte)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS le signal d'ouverture est envoyé à la porte
-        self.assertTrue(porte.ouverture_demandee)
+        self.assertTrue(self.porte.ouverture_demandee)
 
     def test_cas_aucune_interrogation(self):
         # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge
-        porte = PorteTest()
-        lecteur = LecteurTest()
-        lecteur.simuler_detection_badge()
+        self.lecteur.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur, porte)
+        self.moteur.associer(self.lecteur, self.porte)
 
         # QUAND le Moteur d'Ouverture n'effectue pas d'interrogation des lecteurs
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
-        self.assertFalse(porte.ouverture_demandee)
+        self.assertFalse(self.porte.ouverture_demandee)
 
     def test_cas_non_badge(self):
         # ÉTANT DONNÉ une Porte reliée à un Lecteur, n'ayant pas détecté un Badge
-        porte = PorteTest()
-        lecteur = LecteurTest()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur, porte)
+        self.moteur.associer(self.lecteur, self.porte)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
-        self.assertFalse(porte.ouverture_demandee)
+        self.assertFalse(self.porte.ouverture_demandee)
 
     def test_cas_lecteur_non_associe(self):
         # ÉTANT DONNÉ un Lecteur non associé à une porte
         lecteur = LecteurTest()
-        lecteur.simuler_detection_badge()
+        self.lecteur.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS aucune porte ne reçoit le signal d'ouverture
-        self.assertEqual(len(moteur_ouverture._portes_a_ouvrir), 0)    
+        self.assertEqual(len(self.moteur._portes_a_ouvrir), 0)    
 
     def test_deux_portes(self):
         # ÉTANT DONNÉ un Lecteur ayant détecté un Badge
@@ -73,12 +75,11 @@ class ControleAccesTest(unittest.TestCase):
 
         lecteur_non_detecte = LecteurTest()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur_detecte, porte_devant_ouvrir)
-        moteur_ouverture.associer(lecteur_non_detecte, porte_devant_rester_fermee)
+        self.moteur.associer(lecteur_detecte, porte_devant_ouvrir)
+        self.moteur.associer(lecteur_non_detecte, porte_devant_rester_fermee)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS seule la Porte reliée au Lecteur reçoit le signal d'ouverture
         self.assertFalse(porte_devant_rester_fermee.ouverture_demandee)
@@ -94,12 +95,11 @@ class ControleAccesTest(unittest.TestCase):
 
         lecteur_non_detecte = LecteurTest()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur_non_detecte, porte_devant_rester_fermee)
-        moteur_ouverture.associer(lecteur_detecte, porte_devant_ouvrir)
+        self.moteur.associer(lecteur_non_detecte, porte_devant_rester_fermee)
+        self.moteur.associer(lecteur_detecte, porte_devant_ouvrir)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS seule la Porte reliée au Lecteur reçoit le signal d'ouverture
         self.assertFalse(porte_devant_rester_fermee.ouverture_demandee)
@@ -107,17 +107,15 @@ class ControleAccesTest(unittest.TestCase):
 
     def test_cas_2_portes(self):
         # ÉTANT DONNÉ deux Portes reliées à un Lecteur, ayant détecté un Badge
-        porte1 = PorteTest()
-        porte2 = PorteTest()
-        lecteur = LecteurTest()
-        lecteur.simuler_detection_badge()
+        porte1 = self.porte
+        porte2 = self.porte
+        self.lecteur.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur, porte1)
-        moteur_ouverture.associer(lecteur, porte2)
+        self.moteur.associer(self.lecteur, porte1)
+        self.moteur.associer(self.lecteur, porte2)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS le signal d'ouverture est envoyé aux deux portes
         self.assertTrue(porte1.ouverture_demandee)
@@ -125,117 +123,119 @@ class ControleAccesTest(unittest.TestCase):
 
     def test_cas_2_lecteurs(self):
         # ÉTANT DONNÉ une Porte reliée à deux Lecteurs, ayant tous les deux détecté un Badge
-        porte = PorteTest()
 
-        lecteur1 = LecteurTest()
+        lecteur1 = self.lecteur
         lecteur1.simuler_detection_badge()
 
-        lecteur2 = LecteurTest()
+        lecteur2 = self.lecteur
         lecteur2.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur1, porte)
-        moteur_ouverture.associer(lecteur2, porte)
+        self.moteur.associer(lecteur1, self.porte)
+        self.moteur.associer(lecteur2, self.porte)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS un seul signal d'ouverture est envoyé à la Porte
-        self.assertTrue(porte.ouverture_demandee)
+        self.assertTrue(self.porte.ouverture_demandee)
 
     def test_cas_fermeture_automatique(self):
         # ÉTANT DONNÉ une Porte ouverte, elle doit se fermer automatiquement après une période d'inactivité
-        porte = PorteTest()
-        lecteur = LecteurTest()
-        lecteur.simuler_detection_badge()
+        self.lecteur.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur, porte)
+        self.moteur.associer(self.lecteur, self.porte)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS la porte se ferme automatiquement après une période d'inactivité
-        self.assertTrue(porte.ouverture_demandee)
-        moteur_ouverture.attendre(2)  # Utilisation de 2 secondes pour simuler l'inactivité
-        self.assertFalse(porte.ouverture_demandee)  # La porte ne doit plus être ouverte
-        self.assertTrue(porte.fermeture_demandee)  # La porte doit être fermée
+        self.assertTrue(self.porte.ouverture_demandee)
+        self.moteur.attendre(2)  # Utilisation de 2 secondes pour simuler l'inactivité
+        self.assertFalse(self.porte.ouverture_demandee)  # La porte ne doit plus être ouverte
+        self.assertTrue(self.porte.fermeture_demandee)  # La porte doit être fermée
 
     def test_cas_duree_ouverte(self):
         # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge
-        porte = PorteTest()
-        lecteur = LecteurTest()
-        lecteur.simuler_detection_badge()
+        self.lecteur.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur, porte)
+        self.moteur.associer(self.lecteur, self.porte)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS la porte reste ouverte pendant une durée prédéfinie
-        self.assertTrue(porte.ouverture_demandee)
-        moteur_ouverture.attendre(3)  # Utilisation de 3 secondes pour vérifier que la porte reste ouverte
-        self.assertFalse(porte.ouverture_demandee)  # La porte doit se fermer après la durée prédéfinie
+        self.assertTrue(self.porte.ouverture_demandee)
+        self.moteur.attendre(3)  # Utilisation de 3 secondes pour vérifier que la porte reste ouverte
+        self.assertFalse(self.porte.ouverture_demandee)  # La porte doit se fermer après la durée prédéfinie
 
     def test_cas_lecteur_non_associe(self):
         # ÉTANT DONNÉ un Lecteur non associé à une porte
         lecteur = LecteurTest()
-        lecteur.simuler_detection_badge()
+        self.lecteur.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS aucune porte ne reçoit le signal d'ouverture
-        self.assertEqual(len(moteur_ouverture._portes_a_ouvrir), 0)
+        self.assertEqual(len(self.moteur._portes_a_ouvrir), 0)
 
     def test_cas_porte_desactivee(self):
         # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge
-        porte = PorteTest()
-        lecteur = LecteurTest()
-        lecteur.simuler_detection_badge()
+        self.lecteur.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur, porte)
+        self.moteur.associer(self.lecteur, self.porte)
 
         # Désactiver la porte
-        moteur_ouverture.desactiver(porte)
+        self.moteur.desactiver(self.porte)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS le signal d'ouverture n'est pas envoyé à la porte désactivée
-        self.assertFalse(porte.ouverture_demandee)    
+        self.assertFalse(self.porte.ouverture_demandee)    
 
     def test_cas_lecteur_avec_badge_invalide(self):
         # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge invalide
-        porte = PorteTest()
-        lecteur = LecteurTest()
-        lecteur.simuler_detection_badge_invalide()
+        self.lecteur.simuler_detection_badge_invalide()
 
-        moteur_ouverture = MoteurOuverture()
-        moteur_ouverture.associer(lecteur, porte)
+        self.moteur.associer(self.lecteur, self.porte)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
-        self.assertFalse(porte.ouverture_demandee)
+        self.assertFalse(self.porte.ouverture_demandee)
 
     def test_cas_aucune_association(self):
         # ÉTANT DONNÉ un Lecteur sans association à une Porte
         lecteur = LecteurTest()
-        lecteur.simuler_detection_badge()
+        self.lecteur.simuler_detection_badge()
 
-        moteur_ouverture = MoteurOuverture()
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-        moteur_ouverture.interroger()
+        self.moteur.interroger()
 
         # ALORS aucune porte ne reçoit le signal d'ouverture
-        self.assertEqual(len(moteur_ouverture._portes_a_ouvrir), 0)    
+        self.assertEqual(len(self.moteur._portes_a_ouvrir), 0)  
+
+    def test_cas_horaires_ouvertures(self):
+        # ÉTANT DONNÉ une Porte reliée à un Lecteur, ayant détecté un Badge
+        self.lecteur.simuler_detection_badge()
+
+        self.moteur.associer(self.lecteur, self.porte)
+
+        # QUAND il est interrogé dans une plage horraire
+        self.moteur.interroger(True)
+
+        # ALORS les portes pourront s'ouvrir en fonction de la plage d'horaire
+        if self.heure_debut <= self.heure_actuelle <= self.heure_fin:
+            # Heure actuelle est comprise dans la plage horaire
+            self.assertTrue(self.porte.ouverture_demandee) 
+        else:
+            # Heure actuelle n'est pas comprise dans la plage horaire
+            self.assertFalse(self.porte.ouverture_demandee) 
+
 
 if __name__ == '__main__':
     unittest.main()
