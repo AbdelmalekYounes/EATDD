@@ -138,6 +138,24 @@ class ControleAccesTest(unittest.TestCase):
 
         # ALORS un seul signal d'ouverture est envoyé à la Porte
         self.assertTrue(self.porte.ouverture_demandee)
+        
+    def test_porte_avec_plusieurs_lecteurs_sans_detection(self):
+        # ÉTANT DONNÉ une Porte reliée à plusieurs Lecteurs
+        lecteur1 = self.lecteur
+        lecteur2 = self.lecteur
+        
+        # ET aucun des Lecteurs ne détecte de Badge
+        # Aucune action nécessaire car par défaut, le badge n'est pas détecté
+        
+        # ET chaque Lecteur est associé à la même Porte
+        self.moteur.associer(lecteur1, self.porte)
+        self.moteur.associer(lecteur2, self.porte)
+        
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        self.moteur.interroger(self.heure_actuelle)
+        
+        # ALORS aucun signal d'ouverture n'est envoyé à la Porte
+        self.assertFalse(self.porte.ouverture_demandee)
 
     def test_cas_fermeture_automatique(self):
         # ÉTANT DONNÉ une Porte ouverte, elle doit se fermer automatiquement après une période d'inactivité
@@ -363,7 +381,9 @@ class ControleAccesTest(unittest.TestCase):
         self.moteur.interroger(heure_actuelle=heure_hors_plage)
 
         # ALORS le signal d'ouverture est envoyé à la porte car le Lecteur admin peut ouvrir
-        self.assertTrue(porte.ouverture_demandee)           
+        self.assertTrue(porte.ouverture_demandee)
+        
+       
 
 if __name__ == '__main__':
     unittest.main()
