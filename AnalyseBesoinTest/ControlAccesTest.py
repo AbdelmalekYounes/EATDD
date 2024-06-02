@@ -226,16 +226,24 @@ class ControleAccesTest(unittest.TestCase):
         self.moteur.associer(self.lecteur, self.porte)
 
         # QUAND il est interrogé dans une plage horraire
-        self.moteur.interroger(True)
+        self.moteur.interroger()
 
         # ALORS les portes pourront s'ouvrir en fonction de la plage d'horaire
-        if self.heure_debut <= self.heure_actuelle <= self.heure_fin:
-            # Heure actuelle est comprise dans la plage horaire
-            self.assertTrue(self.porte.ouverture_demandee) 
-        else:
-            # Heure actuelle n'est pas comprise dans la plage horaire
-            self.assertFalse(self.porte.ouverture_demandee) 
+        self.assertTrue(self.porte.ouverture_demandee)
 
+    def test_admin_badge_hors_horaire(self):
+        # ÉTANT DONNÉ une Porte reliée à un Lecteur admin, ayant détecté un Badge valide en dehors des heures d'ouverture
+        self.lecteur.simuler_detection_badge()
+        self.lecteur.rendre_admin()
+
+        self.moteur.associer(self.lecteur, self.porte)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs en dehors des heures d'ouverture
+        heure_hors_plage = time(20)
+        self.moteur.interroger(heure_actuelle=heure_hors_plage)
+
+        # ALORS le signal d'ouverture est envoyé à la porte
+        self.assertTrue(self.porte.ouverture_demandee)
 
 if __name__ == '__main__':
     unittest.main()
