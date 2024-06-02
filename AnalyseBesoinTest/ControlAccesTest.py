@@ -285,6 +285,18 @@ class ControleAccesTest(unittest.TestCase):
         # ALORS le signal d'ouverture est envoyé à la porte
         self.assertTrue(self.porte.ouverture_demandee)
      
+    def test_badge_normal_hors_horaire(self):
+        # ÉTANT DONNÉ une Porte reliée à un Lecteur non admin, ayant détecté un Badge valide en dehors des heures d'ouverture
+        self.lecteur.simuler_detection_badge()
+
+        self.moteur.associer(self.lecteur, self.porte)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs en dehors des heures d'ouverture
+        heure_hors_plage = time(20)
+        self.moteur.interroger(heure_actuelle=heure_hors_plage)
+
+        # ALORS le signal d'ouverture n'est pas envoyé à la porte
+        self.assertFalse(self.porte.ouverture_demandee) 
 
 if __name__ == '__main__':
     unittest.main()
