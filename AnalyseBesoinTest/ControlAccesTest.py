@@ -298,5 +298,24 @@ class ControleAccesTest(unittest.TestCase):
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
         self.assertFalse(self.porte.ouverture_demandee) 
 
+    def test_admin_peut_ouvrir_toutes_les_portes(self):
+        # ÉTANT DONNÉ un Lecteur admin pouvant ouvrir plusieurs portes
+        porte1 = PorteTest()
+        porte2 = PorteTest()
+
+        self.lecteur.simuler_detection_badge()
+        self.lecteur.rendre_admin()
+
+        self.moteur.associer(self.lecteur, porte1)
+        self.moteur.associer(self.lecteur, porte2)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs en dehors des heures d'ouverture
+        heure_hors_plage = time(20)
+        self.moteur.interroger(heure_actuelle=heure_hors_plage)
+
+        # ALORS le signal d'ouverture est envoyé à toutes les portes
+        self.assertTrue(porte1.ouverture_demandee)
+        self.assertTrue(porte2.ouverture_demandee)    
+
 if __name__ == '__main__':
     unittest.main()
