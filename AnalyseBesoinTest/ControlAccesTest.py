@@ -343,7 +343,27 @@ class ControleAccesTest(unittest.TestCase):
         self.moteur.interroger(heure_actuelle=heure_hors_plage)
 
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
-        self.assertFalse(porte1.ouverture_demandee)        
+        self.assertFalse(porte1.ouverture_demandee) 
+
+    def test_admin_et_non_admin_lecteurs(self):
+        # ÉTANT DONNÉ une Porte reliée à un Lecteur admin et un Lecteur non admin
+        porte = PorteTest()
+        lecteur_admin = LecteurTest()
+        lecteur_admin.simuler_detection_badge()
+        lecteur_admin.rendre_admin()
+
+        lecteur_non_admin = LecteurTest()
+        lecteur_non_admin.simuler_detection_badge()
+
+        self.moteur.associer(lecteur_admin, porte)
+        self.moteur.associer(lecteur_non_admin, porte)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs en dehors des heures d'ouverture
+        heure_hors_plage = time(20)
+        self.moteur.interroger(heure_actuelle=heure_hors_plage)
+
+        # ALORS le signal d'ouverture est envoyé à la porte car le Lecteur admin peut ouvrir
+        self.assertTrue(porte.ouverture_demandee)           
 
 if __name__ == '__main__':
     unittest.main()
